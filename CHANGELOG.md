@@ -1,5 +1,41 @@
 # Changelog
 
+## 3.2.0-rc.5
+
+### Minor Changes
+
+- 6947106: Add the shared MediaBuy `name` to `buy_products`, `accept_proposal`, and the
+  compact commitment response, keeping it outside accepted commercial terms and
+  defining buyer-supplied precedence over a proposal-derived default.
+- 7082ff1: Add an optional seller-policy decline reason to `REQUOTE_REQUIRED` and buy-specific `ACTION_NOT_ALLOWED` errors, with typed details for the existing envelope-field and change-term conventions. The coarse vocabulary includes inventory, share-of-voice, minimum-commitment, notice-period, contract-term, frequency-cap, and other policy dimensions while preserving seller control over sensitive policy disclosure.
+- 6947106: Require verifiers to treat unsigned MCP transport sessions as
+  non-authoritative: identity, authorization, account and resource selection,
+  and task ownership must derive from each request rather than
+  `Mcp-Session-Id`.
+- 6947106: Require idempotency key ledgers to outlive created resources for the declared
+  replay window, and add the terminal `COMMITTED_RESOURCE_PURGED` outcome for a
+  write that commits before its resource is independently deleted. Ambiguous
+  handler or downstream timeouts now retain a fail-closed reconciliation claim
+  instead of freeing the key for duplicate execution, with sandbox purge/replay
+  coverage in the compliance controller.
+- 2639ace: Add optional AdCP 3.x migration fields that make `get_creative_features`
+  retry-safe and reconcilable without breaking existing implementations. Clients
+  SHOULD send `idempotency_key`; providers that advertise replay support MUST
+  honor supplied keys for at least 24 hours. Providers SHOULD emit a stable
+  `evaluation_id`, which remains stable across replays and async completion when
+  present. Both fields are planned to become required in AdCP 4.0. Add
+  deterministic conformance coverage for the recommended keyed and identified
+  profile, including synchronous, asynchronous, conflicting, and concurrent
+  retries plus terminal pricing and consumption reconciliation.
+
+### Patch Changes
+
+- 0f83623: Fix webhook-emission compliance setup to discover and bind a real product and
+  pricing option before create_media_buy, waiting for asynchronous discovery to
+  complete when needed. Replace unresolved test-kit schema
+  references with explicit request and response schema paths and complete the
+  trigger samples so conformance validation cannot silently skip these requests.
+
 ## 3.2.0-rc.4
 
 ### Minor Changes
